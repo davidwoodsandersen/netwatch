@@ -74,7 +74,7 @@ def create_influx_db():
 
 def run_speedtest():
     cmd = ['speedtest', '-p', 'no', '-f', 'json-pretty', '--accept-license', '--accept-gdpr']
-    output = subprocess.check_output(cmd)
+    output = subprocess.check_output(cmd, timeout=120)
     log('Processing result...')
     result = bytes_to_json(output)
     return get_line(result)
