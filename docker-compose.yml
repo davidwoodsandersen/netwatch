@@ -1,0 +1,46 @@
+version: '3'
+services:
+  influxdb:
+    container_name: influxdb
+    image: influxdb:latest
+    restart: always
+    environment:
+      INFLUXDB_DATA_ENGINE: "tsm1"
+      INFLUXDB_REPORTING_DISABLED: "false"
+    ports:
+      - "8083:8083"
+      - "8086:8086"
+      - "8090:8090"
+  telegraf:
+    container_name: telegraf
+    build:
+      context: .
+      dockerfile: ./telegraf/Dockerfile
+    links:
+      - influxdb
+    volumes:
+      - ./telegraf/telegraf.conf:/etc/telegraf/telegraf.conf:ro
+      - ./telegraf/snmp.conf:/etc/snmp/snmp.conf
+    environment:
+      INFLUXDB_HTTP: "http://influxdb:8086"
+  ookla:
+    container_name: ookla
+    build:
+      context: .
+      dockerfile: ./ookla/Dockerfile
+    environment:
+      INFLUXDB_HTTP: "http://influxdb:8086"
+    links:
+      - influxdb
+  grafana:
+    container_name: grafana
+    image: grafana/grafana
+    restart: always
+    links:
+      - influxdb
+    volumes:
+      - ./grafana/dashboards:/var/lib/grafana/dashboards
+      - ./grafana/provisioning:/etc/grafana/provisioning
+      - ./grafana/config.ini:/etc/grafana/grafana.ini
+    ports:
+      - "3000:3000"

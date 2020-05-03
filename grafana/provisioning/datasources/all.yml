@@ -1,0 +1,18 @@
+datasources:
+- name: 'telegraf'
+  type: 'influxdb'
+  access: 'proxy'
+  database: 'telegraf'
+  org_id: 1
+  url: 'http://influxdb:8086'
+  version: 1
+  editable: true
+- name: 'speedtest'
+  type: 'influxdb'
+  access: 'proxy'
+  database: 'speedtest'
+  org_id: 1
+  url: 'http://influxdb:8086'
+  is_default: true
+  version: 1
+  editable: true
